@@ -5,233 +5,147 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-# Logger sozlash
+# --- Sozlamalar ---
 logging.basicConfig(level=logging.INFO)
 
-# .env dan o'qish uchun
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-ADMIN_IDS = os.getenv("ADMIN_IDS")  # string, vergul bilan bo'lingan IDlar
+ADMIN_IDS = os.getenv("ADMIN_IDS")
 GROUP_ID = os.getenv("GROUP_ID")
 
 if not BOT_TOKEN or not ADMIN_IDS or not GROUP_ID:
-    logging.error("Iltimos .env faylini to'liq va to'g'ri to'ldiring!")
+    logging.error("⚠️ .env fayl to‘liq emas!")
     exit()
 
 ADMIN_IDS = list(map(int, ADMIN_IDS.split(',')))
 GROUP_ID = int(GROUP_ID)
 
 bot = Bot(token=BOT_TOKEN)
-storage = MemoryStorage()
-dp = Dispatcher(bot, storage=storage)
+dp = Dispatcher(bot, storage=MemoryStorage())
 
-# --- Holatlar (States) ---
+# --- Holatlar ---
 class OrderStates(StatesGroup):
     choosing_service = State()
     confirming_order = State()
-    waiting_payment = State()
 
-# --- Menyular va kalitlar ---
-main_menu_kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-main_menu_kb.add("🕋 Umra Paketlari")
-main_menu_kb.add("🛂 Visa Xizmatlari")
-main_menu_kb.add("🌙 Ravza Ruxsatnomalari")
-main_menu_kb.add("🚗 Transport Xizmatlari")
-main_menu_kb.add("🚆 Po‘ezd Biletlar")
-main_menu_kb.add("✈️ Aviabiletlar")
-main_menu_kb.add("🍽️ Guruh Ovqatlar")
+# --- Menyu ---
+main_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
+main_menu.row("🕋 Umra Paketlari", "🛂 Visa Xizmatlari")
+main_menu.row("🌙 Ravza Ruxsatnomalari", "🚗 Transport Xizmatlari")
+main_menu.row("🚆 Po‘ezd Biletlar", "✈️ Aviabiletlar")
+main_menu.row("🍽️ Guruh Ovqatlar")
 
-cancel_kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-cancel_kb.add("❌ Bekor qilish")
-
-# --- Xizmatlar matnlari va narxlar ---
-services_info = {
-    "umra_paket": {
-        "name": "Umra Paketlari",
-        "description": (
-            "Umra safaringizni mukammal qiling! 📿\n"
-            "✅ Oddiy Paket: $1100 dan\n"
-            "✅ VIP Paket: $2000 dan\n"
-            "✅ Paketga quyidagilar kiradi:\n"
-            "- Parvoz, mehmonxona\n"
-            "- Transport, guruh ovqatlar\n"
-            "- Tasarruf va qo‘llab-quvvatlash\n\n"
-            "Siz uchun qulay va sifatli xizmatlar."
-        ),
-    },
-    "visa": {
-        "name": "Visa Xizmatlari",
-        "description": (
-            "Visa olish xizmatlari:\n"
-            "🛂 Turist Visa: $120 dona uchun\n"
-            "🕋 Umra Visa: $160 dona uchun\n\n"
-            "Eslatma: Visa faqat avval ro‘yxatdan o‘tmagan va Ravza ruxsatnomasi olinmagan mijozlar uchun. "
-            "Agar vizangiz bor bo‘lsa, bizda mavjud vizalarga xizmat ko‘rsatamiz."
-        ),
-    },
-    "ravza": {
-        "name": "Ravza Ruxsatnomalari",
-        "description": (
-            "Ravza (Rawda) ruxsatnomalari:\n"
-            "🎟️ Vizasi bo‘lganlarga: 15 SAR/dona\n"
-            "🎟️ Vizasi bo‘lmaganlarga: 20 SAR/dona\n\n"
-            "Guruhlar uchun arzonroq narxlar.\n"
-            "Ruxsatnoma olish uchun vizangizning mavjudligi muhim."
-        ),
-    },
-    "transport": {
-        "name": "Transport Xizmatlari",
-        "description": "Sizga qulay transport xizmatlari:\n- Avtobus, Taksi, Shaxsiy transport.\nNarxlar va batafsil ma’lumot uchun murojaat qiling.",
-    },
-    "train": {
-        "name": "Po‘ezd Biletlar",
-        "description": (
-            "HHR Po‘ezd yo‘nalishlari uchun biletlar:\n"
-            "• Madina - Makka\n"
-            "• Madina - Riyadh\n"
-            "• Riyadh - Dammam\n"
-            "Narxlar yo‘nalishga qarab o‘zgaradi.\n"
-            "Batafsil ma’lumot uchun biz bilan bog‘laning."
-        ),
-    },
-    "avia": {
-        "name": "Aviabiletlar",
-        "description": (
-            "Dunyoning istalgan nuqtasiga aviachipta xizmatlari.\n"
-            "Yo‘nalish va narxlar mijoz talabiga qarab belgilanadi.\n"
-            "Bizning mutaxassislarimiz sizga yordam beradi."
-        ),
-    },
-    "food": {
-        "name": "Guruh Ovqatlar",
-        "description": (
-            "Katta guruhlar uchun maxsus ovqat xizmatlari.\n"
-            "Turli milliy taomlar, sifatli xizmat.\n"
-            "Narx va menyu haqida batafsil ma’lumot uchun murojaat qiling."
-        ),
-    }
+# --- Xizmatlar ---
+services = {
+    "🕋 Umra Paketlari": (
+        "📿 Umra Paketlari\n"
+        "✅ Oddiy: $1100+\n"
+        "✅ VIP: $2000+\n"
+        "- Parvoz, Mehmonxona, Transport, Ovqat, Ruxsatnomalar.\n\n"
+        "Sifatli va qulay xizmatlar siz uchun!"
+    ),
+    "🛂 Visa Xizmatlari": (
+        "🛂 Visa Xizmatlari:\n"
+        "• Turistik: $120\n"
+        "• Umra: $160\n\n"
+        "Vizasi yo‘q mijozlarga tezkor yordam!"
+    ),
+    "🌙 Ravza Ruxsatnomalari": (
+        "🌙 Ravza (Rawda) ruxsatnomalari:\n"
+        "• Vizasi borlarga: 15 SAR\n"
+        "• Vizasi yo‘qlarga: 20 SAR\n"
+        "• Guruh uchun chegirmalar mavjud."
+    ),
+    "🚗 Transport Xizmatlari": (
+        "🚗 Transport:\n"
+        "• Avtobus, Taksi, Shaxsiy avtomobil\n"
+        "• Yo‘nalish va narxlar uchun biz bilan bog‘laning."
+    ),
+    "🚆 Po‘ezd Biletlar": (
+        "🚆 Po‘ezd yo‘nalishlari:\n"
+        "• Madina - Makka\n"
+        "• Riyadh - Dammam\n"
+        "• Narxlar yo‘nalishga qarab belgilanadi."
+    ),
+    "✈️ Aviabiletlar": (
+        "✈️ Aviabiletlar:\n"
+        "• Dunyo bo‘ylab yo‘nalishlar\n"
+        "• Narxlar mijoz talabiga ko‘ra\n"
+        "• Malakali mutaxassislar yordam beradi."
+    ),
+    "🍽️ Guruh Ovqatlar": (
+        "🍽️ Ovqat Xizmatlari:\n"
+        "• 10+ kishilik guruhlar uchun\n"
+        "• Milliy va xalqaro taomlar\n"
+        "• Sifatli va xavfsiz xizmat."
+    )
 }
 
-# --- To'lov usullari ---
-payment_info = (
-    "To‘lov usullari:\n"
-    "💳 Bank kartalari orqali to‘lov\n"
-    "📲 PayMe, Click, Apelsin kabi elektron to‘lovlar\n"
-    "🤝 Managerlar orqali naqd to‘lov\n\n"
-    "To‘lovni amalga oshirganingizdan so‘ng, iltimos, kvitansiyani yuboring."
+payment_text = (
+    "\n💳 To‘lov usullari:\n"
+    "- Bank karta\n- PayMe, Click, Apelsin\n- Naqd manager orqali\n\n"
+    "To‘lovdan so‘ng kvitansiyani yuboring."
 )
 
-# --- Handlerlar ---
+# --- Start ---
 @dp.message_handler(commands=["start", "help"])
-async def cmd_start(message: types.Message):
+async def start_handler(message: types.Message):
     await message.answer(
-        f"Assalomu alaykum, {message.from_user.full_name}!\n"
-        "UmraJet Botga xush kelibsiz! 🌟\n\n"
-        "Quyidagi xizmatlardan birini tanlang:",
-        reply_markup=main_menu_kb
+        f"Assalomu alaykum {message.from_user.full_name}!\n"
+        "UmraJet botiga xush kelibsiz. Xizmat turini tanlang:",
+        reply_markup=main_menu
     )
 
+# --- Xizmat tanlash ---
+@dp.message_handler(lambda msg: msg.text in services)
+async def choose_service(message: types.Message, state: FSMContext):
+    await state.update_data(service=message.text)
+    await OrderStates.confirming_order.set()
+    await message.answer(
+        services[message.text] + payment_text,
+        reply_markup=types.ReplyKeyboardMarkup(resize_keyboard=True).add("✅ Buyurtma berish").add("🔙 Orqaga")
+    )
 
-@dp.message_handler(lambda m: m.text in [info["name"] for info in services_info.values()])
-async def service_menu(message: types.Message):
-    # Xizmat nomi orqali aniqlash
-    chosen_service = None
-    for key, info in services_info.items():
-        if message.text == info["name"]:
-            chosen_service = key
-            break
-    if chosen_service:
-        await message.answer(
-            f"📌 {services_info[chosen_service]['name']} haqida ma’lumot:\n\n"
-            f"{services_info[chosen_service]['description']}\n\n"
-            f"{payment_info}\n\n"
-            "Buyurtma berish uchun *Buyurtma berish* tugmasini bosing.",
-            reply_markup=types.ReplyKeyboardMarkup(resize_keyboard=True).add("✅ Buyurtma berish").add("🔙 Orqaga")
-        )
-        await OrderStates.choosing_service.set()
-        await dp.current_state(user=message.from_user.id).update_data(service=chosen_service)
-    else:
-        await message.answer("Kechirasiz, bunday xizmat mavjud emas.")
-
-
-@dp.message_handler(lambda m: m.text == "🔙 Orqaga", state='*')
+# --- Orqaga ---
+@dp.message_handler(lambda msg: msg.text == "🔙 Orqaga", state="*")
 async def go_back(message: types.Message, state: FSMContext):
     await state.finish()
-    await message.answer(
-        "Asosiy menyu:",
-        reply_markup=main_menu_kb
-    )
+    await message.answer("Asosiy menyu", reply_markup=main_menu)
 
-
-@dp.message_handler(lambda m: m.text == "❌ Bekor qilish", state='*')
-async def cancel_handler(message: types.Message, state: FSMContext):
-    await state.finish()
-    await message.answer("Buyurtma bekor qilindi. Asosiy menyu:", reply_markup=main_menu_kb)
-
-
-@dp.message_handler(lambda m: m.text == "✅ Buyurtma berish", state=OrderStates.choosing_service)
-async def order_confirm(message: types.Message, state: FSMContext):
+# --- Buyurtma tasdiqlash ---
+@dp.message_handler(lambda msg: msg.text == "✅ Buyurtma berish", state=OrderStates.confirming_order)
+async def confirm_order(message: types.Message, state: FSMContext):
     data = await state.get_data()
     service = data.get("service")
-    if service:
-        await message.answer(
-            f"Buyurtmangizni tasdiqlaysizmi? \nXizmat: {services_info[service]['name']}",
-            reply_markup=types.ReplyKeyboardMarkup(resize_keyboard=True).add("✅ Tasdiqlash").add("❌ Bekor qilish")
-        )
-        await OrderStates.confirming_order.set()
-    else:
-        await message.answer("Xizmat tanlanmadi. Iltimos, qayta tanlang.")
-        await state.finish()
-
-
-@dp.message_handler(lambda m: m.text == "✅ Tasdiqlash", state=OrderStates.confirming_order)
-async def process_order(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    service = data.get("service")
-    user_id = message.from_user.id
-    full_name = message.from_user.full_name
-
-    # Bu yerda siz orderni DB yoki faylga saqlashingiz mumkin
-    # Hozircha managerlarga xabar yuboramiz
 
     text = (
         f"🆕 Yangi buyurtma!\n"
-        f"👤 Foydalanuvchi: {full_name} (ID: {user_id})\n"
-        f"📦 Xizmat: {services_info[service]['name']}\n"
-        "⏳ Holat: To‘lov kutilmoqda."
+        f"👤 Foydalanuvchi: {message.from_user.full_name}\n"
+        f"🆔 ID: {message.from_user.id}\n"
+        f"📦 Xizmat: {service}"
     )
 
-    # Adminlarga xabar yuborish
     for admin_id in ADMIN_IDS:
         try:
             await bot.send_message(admin_id, text)
-        except Exception as e:
-            logging.error(f"Adminga xabar yuborishda xato: {e}")
+        except:
+            pass
 
-    await message.answer(
-        "Buyurtmangiz qabul qilindi! Tez orada managerlar siz bilan bog‘lanadi.\n"
-        "To‘lovni amalga oshirgach, kvitansiyani yuboring.",
-        reply_markup=main_menu_kb
-    )
+    await message.answer("Buyurtmangiz qabul qilindi! Managerlar siz bilan bog‘lanadi.", reply_markup=main_menu)
     await state.finish()
 
+# --- Admin Panel ---
+@dp.message_handler(commands=["admin"])
+async def admin_panel(message: types.Message):
+    if message.from_user.id in ADMIN_IDS:
+        await message.answer("🔐 Admin panel: foydalanuvchilar statistikasi va buyurtmalarni boshqarish (beta).")
+    else:
+        await message.answer("⛔ Sizda admin ruxsati yo‘q.")
 
-@dp.message_handler(state='*', content_types=types.ContentTypes.ANY)
-async def default_handler(message: types.Message, state: FSMContext):
+# --- Boshqa xabarlar ---
+@dp.message_handler()
+async def fallback(message: types.Message):
     await message.answer("Iltimos, menyudan xizmatni tanlang yoki /start buyrug‘ini bering.")
 
-
-# --- Admin komandalar ---
-@dp.message_handler(commands=["admin"], user_id=ADMIN_IDS)
-async def admin_panel(message: types.Message):
-    users_count = "Noma'lum"  # DB bo‘lsa, shu yerda hisoblash mumkin
-    text = (
-        f"Admin paneliga xush kelibsiz!\n"
-        f"Foydalanuvchilar soni: {users_count}\n"
-        "Buyurtmalarni ko‘rish va boshqarish funktsiyasi hozircha ishlab chiqilmoqda."
-    )
-    await message.answer(text)
-
-
-# --- Bot ishga tushishi ---
+# --- Run ---
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
