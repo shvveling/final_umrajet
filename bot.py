@@ -28,7 +28,6 @@ dp = Dispatcher(bot, storage=storage)
 
 # FSM holatlari
 class OrderStates(StatesGroup):
-    waiting_service = State()
     waiting_order_confirm = State()
     waiting_payment_method = State()
     waiting_payment_proof = State()
@@ -184,63 +183,62 @@ async def service_select_handler(message: types.Message, state: FSMContext):
             break
 
     if not service_key:
-        await message.answer("Iltimos, xizmatlardan birini tanlang.", reply_markup=main_menu_kb)
+        await message.answer("Iltimos, quyidagi tugmalardan birini tanlang.")
         return
 
-    await state.update_data(service_key=service_key)
     service = services_info[service_key]
-
-    msg_text = (
-        f"💠 *{service['name']}*\n\n"
+    managers = get_managers_text(service["managers"])
+    response = (
+        f"<b>{service['name']}</b>\n\n"
         f"{service['description']}\n\n"
-        f"📞 Boshqaruvchilar:\n{get_managers_text(service['managers'])}\n\n"
-        "Buyurtma berishni davom ettirish uchun \"✅ Buyurtma berish\" tugmasini bosing yoki 🔙 Orqaga tugmasi bilan bosh menyuga qayting."
+        f"📞 <b>Managerlar:</b>\n{managers}\n\n"
+        "Buyurtma berish uchun to‘lov usulini tanlang."
     )
-    order_kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    order_kb.add("✅ Buyurtma berish", "🔙 Orqaga")
+    await OrderStates.waiting_payment_method.set()
+    await state.update_data(service=service_key)
+    await message.answer(response, reply_markup=payment_kb)
 
-    await message.answer(msg_text, reply_markup=order_kb)
-    await OrderStates.waiting_order_confirm.set()
-
-# Buyurtmani tasdiqlash
-@dp.message_handler(state=OrderStates.waiting_order_confirm)
-async def order_confirm_handler(message: types.Message, state: FSMContext):
-    if message.text == "✅ Buyurtma berish":
-        payment_kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-        payment_kb.add("💳 Uzcard", "💳 Humo", "💳 Visa", "🪙 Crypto", "🔙 Orqaga")
-        await message.answer("Iltimos, to‘lov usulini tanlang:", reply_markup=payment_kb)
-        await OrderStates.waiting_payment_method.set()
-    elif message.text == "🔙 Orqaga":
-        await start_menu(message, state)
-    else:
-        await message.answer("Iltimos, yuqoridagi tugmalardan birini tanlang.")
-
-# To‘lov usulini tanlash
+# To‘lov usuli tanlash handleri
 @dp.message_handler(state=OrderStates.waiting_payment_method)
 async def payment_method_handler(message: types.Message, state: FSMContext):
-    if is_back_or_cancel(message):
+    text = message.text
+
+    if text == "🔙 Orqaga":
         await start_menu(message, state)
         return
-
-    if message.text not in payment_details.keys():
+    if text == "❌ Bekor qilish":
+        await state.finish()
+        await message.answer("Buyurtma bekor qilindi. Kerak bo‘lsa, boshidan boshlang.", reply_markup=main_menu_kb)
+        return
+    if text not in payment_details:
         await message.answer("Iltimos, to‘lov usullaridan birini tanlang.", reply_markup=payment_kb)
         return
 
-    await state.update_data(payment_method=message.text)
-    await message.answer(payment_details[message.text], reply_markup=back_cancel_kb)
-    await message.answer("To‘lovni amalga oshiring va tasdiqlovchi hujjatni yuboring (skrinshot, kvitansiya va hokazo).")
-    await OrderStates.waiting_payment_proof.set()
-
-# To‘lov tasdiqlovchi hujjatini qabul qilish
-@dp.message_handler(state=OrderStates.waiting_payment_proof, content_types=types.ContentTypes.ANY)
-async def payment_proof_handler(message: types.Message, state: FSMContext):
-    if is_back_or_cancel(message):
-        await start_menu(message, state)
+    # Tanlangan xizmat va to‘lov usuli saqlanadi
+    data = await state.get_data()
+    service_key = data.get("service")
+    if not service_key:
+        await message.answer("Xatolik yuz berdi. Iltimos, boshidan boshlang.", reply_markup=main_menu_kb)
+        await state.finish()
         return
 
-    # To‘lov hujjatini qabul qildik deb faraz qilamiz
+    pay_info = payment_details[text]
+
+    await state.update_data(payment_method=text)
+    await OrderStates.waiting_payment_proof.set()
+    await message.answer(
+        f"<b>To‘lov maʼlumotlari ({text}):</b>\n\n"
+        f"{pay_info}\n\n"
+        "To‘lovni amalga oshirgach, iltimos, to‘lov kvitansiyasining rasmini yoki skrinshotini yuboring.\n\n"
+        "Agar bekor qilmoqchi bo‘lsangiz, «❌ Bekor qilish» tugmasini bosing.",
+        reply_markup=back_cancel_kb
+    )
+
+# To‘lov kvitansiyasi qabul qilish handleri
+@dp.message_handler(content_types=types.ContentType.PHOTO, state=OrderStates.waiting_payment_proof)
+async def payment_proof_handler(message: types.Message, state: FSMContext):
     data = await state.get_data()
-    service_key = data.get("service_key")
+    service_key = data.get("service")
     payment_method = data.get("payment_method")
 
     if not service_key or not payment_method:
@@ -248,48 +246,75 @@ async def payment_proof_handler(message: types.Message, state: FSMContext):
         await state.finish()
         return
 
-    service = services_info.get(service_key)
-    if not service:
-        await message.answer("Xizmat topilmadi. Iltimos, boshidan boshlang.", reply_markup=main_menu_kb)
-        await state.finish()
-        return
-
     # Adminlarga xabar yuborish
-    msg = (
-        f"📥 Yangi buyurtma qabul qilindi!\n\n"
-        f"Xizmat: *{service['name']}*\n"
-        f"To‘lov usuli: *{payment_method}*\n"
-        f"Foydalanuvchi: @{message.from_user.username or message.from_user.full_name} (ID: {message.from_user.id})"
+    service = services_info[service_key]
+    managers = get_managers_text(service["managers"])
+
+    caption = (
+        f"📥 Yangi buyurtma!\n\n"
+        f"🕋 Xizmat: <b>{service['name']}</b>\n"
+        f"💳 To‘lov usuli: <b>{payment_method}</b>\n"
+        f"👤 Foydalanuvchi: {message.from_user.get_mention(as_html=True)}\n"
+        f"🆔 User ID: <code>{message.from_user.id}</code>\n\n"
+        f"📞 Managerlar: {managers}\n\n"
+        f"⏳ Iltimos, buyurtmani tezda ko‘rib chiqing."
     )
 
-    # Adminlarga xabar yuboramiz va to‘lov hujjatini fayl sifatida yuboramiz
+    # Rasmi adminlarga yuborish
     for admin_id in ADMIN_IDS:
         try:
-            await bot.send_message(admin_id, msg)
-            if message.content_type == "photo":
-                await bot.send_photo(admin_id, photo=message.photo[-1].file_id, caption="To‘lov tasdiqlovchi rasm")
-            elif message.content_type == "document":
-                await bot.send_document(admin_id, document=message.document.file_id, caption="To‘lov tasdiqlovchi hujjat")
-            elif message.content_type == "video":
-                await bot.send_video(admin_id, video=message.video.file_id, caption="To‘lov tasdiqlovchi video")
-            else:
-                # Agar oddiy matn yoki boshqa turda bo‘lsa, xabarni oddiy matn sifatida yuboramiz
-                await bot.send_message(admin_id, f"To‘lov tasdiqlovchi xabar:\n{message.text or 'Nomaʼlum format'}")
+            await bot.send_photo(admin_id, photo=message.photo[-1].file_id, caption=caption, parse_mode="HTML")
         except Exception as e:
             logging.error(f"Adminga xabar yuborishda xatolik: {e}")
 
-    await message.answer("Buyurtmangiz qabul qilindi! Tez orada siz bilan bog‘lanamiz.", reply_markup=main_menu_kb)
+    # Guruhga ham yuborish (agar GROUP_ID aniq ko‘rsatilgan bo‘lsa)
+    if GROUP_ID != 0:
+        try:
+            await bot.send_photo(GROUP_ID, photo=message.photo[-1].file_id, caption=caption, parse_mode="HTML")
+        except Exception as e:
+            logging.error(f"Guruhga xabar yuborishda xatolik: {e}")
+
+    await message.answer(
+        "To‘lov kvitansiyangiz qabul qilindi! Tez orada managerlarimiz siz bilan bog‘lanishadi.\n\n"
+        "Yana xizmatlardan foydalanish uchun bosh menyuga qayting.",
+        reply_markup=main_menu_kb
+    )
     await state.finish()
 
-# Orqaga va bekor qilish tugmalari uchun universal handler
-@dp.message_handler(lambda m: m.text in ["🔙 Orqaga", "❌ Bekor qilish"], state="*")
-async def back_or_cancel_handler(message: types.Message, state: FSMContext):
-    await start_menu(message, state)
+# Agar foydalanuvchi rasmdan boshqa narsa yuborsa (to‘lov kvitansiyasi o‘rnida)
+@dp.message_handler(state=OrderStates.waiting_payment_proof)
+async def invalid_payment_proof_handler(message: types.Message, state: FSMContext):
+    if is_back_or_cancel(message):
+        if message.text == "🔙 Orqaga":
+            data = await state.get_data()
+            # To‘lov usuli tanlashga qaytamiz
+            await OrderStates.waiting_payment_method.set()
+            await message.answer("To‘lov usulini qayta tanlang:", reply_markup=payment_kb)
+        else:
+            await state.finish()
+            await message.answer("Buyurtma bekor qilindi.", reply_markup=main_menu_kb)
+        return
 
-# Noma'lum xabarlarni ushlash
+    await message.answer(
+        "Iltimos, to‘lov kvitansiyasining rasm shaklini yuboring yoki «❌ Bekor qilish» tugmasini bosing."
+    )
+
+# Orqaga/ bekor qilish tugmalari har doim ishlashi uchun universal handler (boshqa holatlar uchun)
+@dp.message_handler(lambda m: m.text in ["🔙 Orqaga", "❌ Bekor qilish"])
+async def back_cancel_global_handler(message: types.Message, state: FSMContext):
+    if message.text == "🔙 Orqaga":
+        await start_menu(message, state)
+    else:
+        await state.finish()
+        await message.answer("Buyurtma bekor qilindi.", reply_markup=main_menu_kb)
+
+# Noto‘g‘ri buyruqlar uchun oddiy javob
 @dp.message_handler()
-async def unknown_message(message: types.Message):
-    await message.answer("Iltimos, menyudan xizmat tanlang yoki /start yozing.")
+async def default_handler(message: types.Message):
+    await message.answer(
+        "Iltimos, menyudan kerakli xizmatni tanlang yoki /start buyrug‘ini bering.",
+        reply_markup=main_menu_kb
+    )
 
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
