@@ -33,8 +33,8 @@ class OrderStates(StatesGroup):
     waiting_payment = State()
 
 # --- 5. Tugmalar va menyular ---
-main_menu = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-main_menu.add(
+main_menu_kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+main_menu_kb.add(
     "🕋 Umra Paketlari", "🛂 Visa Xizmatlari",
     "🌙 Ravza Ruxsatnomalari", "🚗 Transport Xizmatlari",
     "🚆 Po‘ezd Biletlar", "✈️ Aviabiletlar",
@@ -44,8 +44,15 @@ main_menu.add(
 back_cancel_kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
 back_cancel_kb.add("🔙 Orqaga", "❌ Bekor qilish")
 
-payment_kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-payment_kb.add("💳 Uzcard", "💳 Humo", "💳 Visa", "💰 Crypto", "🔙 Orqaga")
+def payment_buttons():
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    kb.add("💳 Uzcard", "💳 Humo", "💳 Visa", "💰 Crypto", "🔙 Orqaga")
+    return kb
+
+def back_cancel_buttons():
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    kb.add("🔙 Orqaga", "❌ Bekor qilish")
+    return kb
 
 # --- 6. Xizmatlar tavsifi (premium marketing uslubida) ---
 services = {
@@ -134,7 +141,7 @@ services = {
     }
 }
 
-# --- 7. To‘lov ma’lumotlari (ancha chiroyli va copy-paste uchun) ---
+# --- 7. To‘lov ma’lumotlari ---
 payments = {
     "Uzcard": (
         "💳 <b>Uzcard to‘lovlari:</b>\n\n"
@@ -154,25 +161,14 @@ payments = {
         "💰 <b>Kripto to‘lovlari:</b>\n\n"
         "USDT (Tron TRC20):\n<code>TLGiUsNzQ8n31x3VwsYiWEU97jdftTDqT3</code>\n\n"
         "ETH (BEP20):\n<code>0xa11fb72cc1ee74cfdaadb25ab2530dd32bafa8f8</code>\n\n"
-        "BTC (BEP20):\n<code>0xa11fb72cc1ee74cfdaadb25ab2530dd32bafa8f8</code>"
+        "BTC (BEP20):\n<code>0x8e9a10874f910244932420ba521f0c92e67414d2</code>"
     )
 }
 
-channels = "📢 Rasmiy kanallar:\n@umrajet\n@the_ravza"
+# --- 8. Qo‘shimcha o‘zgaruvchilar ---
+services_titles = [s["title"] for s in services.values()]
 
-# --- 8. Foydali funksiyalar ---
-def managers_to_str(managers_list):
-    return ", ".join(managers_list)
-
-def payment_buttons():
-    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    kb.add("💳 Uzcard", "💳 Humo", "💳 Visa", "💰 Crypto", "🔙 Orqaga")
-    return kb
-
-def back_cancel_buttons():
-    kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    kb.add("🔙 Orqaga", "❌ Bekor qilish")
-    return kb
+# --- 9. Handlerlar ---
 
 @dp.message_handler(commands=["start", "help"])
 async def start_handler(message: types.Message):
@@ -195,139 +191,130 @@ async def start_handler(message: types.Message):
         "🔹 <a href='https://t.me/V001VB'>@V001VB</a> — Zaxira manager"
     )
     await message.answer(text, reply_markup=main_menu_kb, parse_mode="HTML", disable_web_page_preview=True)
-    
-# --- 10. Xizmat tanlash handleri ---
-@dp.message_handler(lambda m: m.text in [s["title"] for s in services.values()])
-async def service_show(message: types.Message, state: FSMContext):
-    for key, val in services.items():
-        if val["title"] == message.text:
-            await state.update_data(service_key=key)
-            text = (
-                f"<b>{val['title']}</b>\n\n"
-                f"{val['desc']}\n\n"
-                f"<b>Managerlar:</b> {managers_to_str(val['managers'])}\n\n"
-                "Buyurtma berish uchun pastdagi tugmani bosing."
-            )
-            kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            kb.add("✅ Buyurtma berish", "🔙 Orqaga")
-            await message.answer(text, parse_mode="HTML", reply_markup=kb)
-            await OrderStates.choosing_service.set()
-            return
+    await OrderStates.choosing_service.set()
 
-# --- 11. Buyurtma berish bosqichi ---
-@dp.message_handler(lambda m: m.text == "✅ Buyurtma berish", state=OrderStates.choosing_service)
-async def order_confirm(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    service_key = data.get("service_key")
-    if not service_key or service_key not in services:
-        await message.answer("Xizmat topilmadi, boshidan tanlang.", reply_markup=main_menu)
-        await state.finish()
+@dp.message_handler(lambda m: m.text in services_titles, state=OrderStates.choosing_service)
+async def show_service_handler(message: types.Message, state: FSMContext):
+    service = next((v for v in services.values() if v["title"] == message.text), None)
+    if service is None:
+        await message.answer("❌ Noto‘g‘ri xizmat tanlandi. Iltimos, menyudan tanlang.")
         return
+    desc = service["desc"]
+    managers = ", ".join(service["managers"])
+    text = f"{desc}\n\n👨‍💼 <b>Managerlar:</b> {managers}\n\n" \
+           "Xizmatdan foydalanishni tasdiqlaysizmi?"
+    await message.answer(text, reply_markup=types.ReplyKeyboardMarkup(resize_keyboard=True).add("✅ Tasdiqlayman", "🔙 Orqaga"), parse_mode="HTML")
+    await state.update_data(service=service["title"])
+    await OrderStates.next()  # confirming_order
 
-    service = services[service_key]
+@dp.message_handler(lambda m: m.text == "✅ Tasdiqlayman", state=OrderStates.confirming_order)
+async def confirm_order_handler(message: types.Message, state: FSMContext):
+    data = await state.get_data()
+    service = data.get("service")
+    if not service:
+        await message.answer("❌ Xizmat tanlanmadi. Iltimos, boshidan tanlang.")
+        await OrderStates.choosing_service.set()
+        return
     text = (
-        f"Siz <b>{service['title']}</b> xizmatini tanladingiz.\n\n"
-        "Iltimos, qulay to‘lov tizimini tanlang:"
+        "To‘lov usulini tanlang:\n\n"
+        "💳 Uzcard\n"
+        "💳 Humo\n"
+        "💳 Visa\n"
+        "💰 Crypto"
     )
-    await message.answer(text, parse_mode="HTML", reply_markup=payment_buttons())
-    await OrderStates.choosing_payment.set()
+    await message.answer(text, reply_markup=payment_buttons())
+    await OrderStates.next()  # choosing_payment
 
-# --- 12. To‘lov tizimini tanlash ---
 @dp.message_handler(lambda m: m.text in ["💳 Uzcard", "💳 Humo", "💳 Visa", "💰 Crypto"], state=OrderStates.choosing_payment)
-async def payment_info(message: types.Message, state: FSMContext):
-    pay_method = message.text.replace("💳 ", "").replace("💰 ", "")
-    text = payments.get(pay_method)
-    if not text:
-        await message.answer("Kechirasiz, ushbu to‘lov turi hozircha mavjud emas.", reply_markup=payment_buttons())
-        return
-
-    data = await state.get_data()
-    service_key = data.get("service_key")
-    service = services.get(service_key)
-
-    confirm_text = (
-        f"Siz <b>{service['title']}</b> xizmatini tanladingiz va "
-        f"<b>{pay_method}</b> orqali to‘lov qilmoqchisiz.\n\n"
-        f"{text}\n\n"
-        "To‘lovni amalga oshirgandan so‘ng, tasdiqlash uchun shaxsiy xabar yuboring.\n"
-        f"{channels}"
-    )
-    await message.answer(confirm_text, parse_mode="HTML", reply_markup=back_cancel_buttons())
-    await OrderStates.waiting_payment.set()
-    await state.update_data(payment_method=pay_method)
-
-# --- 13. To‘lov tasdiqlash ---
-@dp.message_handler(state=OrderStates.waiting_payment)
-async def payment_done(message: types.Message, state: FSMContext):
-    if message.text in ["🔙 Orqaga"]:
-        # Orqaga qaytish
-        await message.answer("To‘lov tizimini tanlash menyusiga qaytdingiz.", reply_markup=payment_buttons())
-        await OrderStates.choosing_payment.set()
-        return
-    elif message.text in ["❌ Bekor qilish"]:
-        await message.answer("Buyurtma bekor qilindi.", reply_markup=main_menu)
-        await state.finish()
-        return
-
-    # Tasdiqlash deb qabul qilamiz va adminlarga xabar yuboramiz
-    data = await state.get_data()
-    service_key = data.get("service_key")
-    payment_method = data.get("payment_method")
-    service = services.get(service_key)
-
-    user = message.from_user
-    order_msg = (
-        f"🆕 <b>Yangi buyurtma</b>!\n\n"
-        f"👤 Foydalanuvchi: {user.full_name} (@{user.username if user.username else 'yo‘q'})\n"
-        f"📱 ID: <code>{user.id}</code>\n"
-        f"🕋 Xizmat: <b>{service['title']}</b>\n"
-        f"💳 To‘lov turi: <b>{payment_method}</b>\n"
-        f"✉️ To‘lov haqida xabar:\n<code>{message.text}</code>"
-    )
-
-    # Adminlarga yuborish
-    for admin_id in ADMIN_IDS:
-        try:
-            await bot.send_message(admin_id, order_msg, parse_mode="HTML")
-        except Exception as e:
-            logging.error(f"Adminga xabar yuborishda xato: {e}")
-
-    # Guruhga yuborish
-    try:
-        await bot.send_message(GROUP_ID, order_msg, parse_mode="HTML")
-    except Exception as e:
-        logging.error(f"Guruhga xabar yuborishda xato: {e}")
-
-    await message.answer("Buyurtmangiz qabul qilindi! Tez orada siz bilan bog‘lanamiz. 🙏", reply_markup=main_menu)
-    await state.finish()
-
-# --- 14. Orqaga va bekor qilish tugmalari umumiy ishlovi ---
-@dp.message_handler(lambda m: m.text == "🔙 Orqaga", state="*")
-async def go_back(message: types.Message, state: FSMContext):
-    current_state = await state.get_state()
-    if current_state == OrderStates.choosing_payment.state:
-        await message.answer("Xizmat tanlash menyusiga qaytdingiz.", reply_markup=main_menu)
-        await state.finish()
-    elif current_state == OrderStates.waiting_payment.state:
-        await message.answer("To‘lov tizimini tanlash menyusiga qaytdingiz.", reply_markup=payment_buttons())
-        await OrderStates.choosing_payment.set()
-    elif current_state == OrderStates.choosing_service.state:
-        await message.answer("Asosiy menyuga qaytdingiz.", reply_markup=main_menu)
-        await state.finish()
+async def payment_method_handler(message: types.Message, state: FSMContext):
+    payment_method = message.text.strip()
+    if payment_method == "💳 Uzcard":
+        key = "Uzcard"
+    elif payment_method == "💳 Humo":
+        key = "Humo"
+    elif payment_method == "💳 Visa":
+        key = "Visa"
+    elif payment_method == "💰 Crypto":
+        key = "Crypto"
     else:
-        await message.answer("Asosiy menyuga qaytdingiz.", reply_markup=main_menu)
-        await state.finish()
+        await message.answer("❌ Noto‘g‘ri to‘lov usuli tanlandi.")
+        return
+
+    payment_info = payments.get(key)
+    if not payment_info:
+        await message.answer("❌ To‘lov ma’lumotlari topilmadi.")
+        return
+
+    await message.answer(
+        payment_info + "\n\nTo‘lovni amalga oshirgach, tasdiqlash uchun xabar yuboring.",
+        reply_markup=back_cancel_buttons(),
+        parse_mode="HTML"
+    )
+    await state.update_data(payment_method=key)
+    await OrderStates.waiting_payment.set()
+
+@dp.message_handler(lambda m: m.text == "🔙 Orqaga", state="*")
+async def go_back_handler(message: types.Message, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state == OrderStates.confirming_order.state:
+        await OrderStates.choosing_service.set()
+        await message.answer("🔙 Asosiy xizmatlar menyusiga qaytdingiz.", reply_markup=main_menu_kb)
+    elif current_state == OrderStates.choosing_payment.state:
+        await OrderStates.confirming_order.set()
+        await message.answer("🔙 Xizmat tasdiqlash menyusiga qaytdingiz.", reply_markup=types.ReplyKeyboardMarkup(resize_keyboard=True).add("✅ Tasdiqlayman", "🔙 Orqaga"))
+    elif current_state == OrderStates.waiting_payment.state:
+        await OrderStates.choosing_payment.set()
+        await message.answer("🔙 To‘lov usulini tanlash menyusiga qaytdingiz.", reply_markup=payment_buttons())
+    else:
+        await message.answer("🔙 Siz bosh menyudasiz.", reply_markup=main_menu_kb)
+        await OrderStates.choosing_service.set()
 
 @dp.message_handler(lambda m: m.text == "❌ Bekor qilish", state="*")
-async def cancel_order(message: types.Message, state: FSMContext):
-    await message.answer("Buyurtma bekor qilindi.", reply_markup=main_menu)
+async def cancel_handler(message: types.Message, state: FSMContext):
+    await state.finish()
+    await message.answer("❌ Buyurtma bekor qilindi. Bosh menyuga qaytdingiz.", reply_markup=main_menu_kb)
+
+@dp.message_handler(state=OrderStates.waiting_payment)
+async def payment_confirmation_handler(message: types.Message, state: FSMContext):
+    data = await state.get_data()
+    service_title = data.get("service")
+    payment_method = data.get("payment_method")
+    if not service_title or not payment_method:
+        await message.answer("❌ Ma'lumotlar to‘liq emas. Iltimos, boshidan boshlang.")
+        await state.finish()
+        return
+
+    # Adminlarga xabar yuborish
+    service = next((v for v in services.values() if v["title"] == service_title), None)
+    user = message.from_user
+    managers = service["managers"] if service else []
+    text = (
+        f"✅ <b>Yangi buyurtma qabul qilindi!</b>\n\n"
+        f"👤 Foydalanuvchi: <a href='tg://user?id={user.id}'>{user.full_name}</a>\n"
+        f"📱 Telegram: @{user.username if user.username else 'yo‘q'}\n"
+        f"🕋 Xizmat: {service_title}\n"
+        f"💳 To‘lov usuli: {payment_method}\n"
+        f"⏰ Vaqt: {message.date.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+        f"📲 Iltimos, tez orada bog‘laning!"
+    )
+    # Guruhga xabar yuborish
+    await bot.send_message(GROUP_ID, text, parse_mode="HTML", disable_web_page_preview=True)
+
+    # Har bir managerga shaxsiy xabar yuborish
+    for mgr_username in managers:
+        try:
+            await bot.send_message(mgr_username, text, parse_mode="HTML", disable_web_page_preview=True)
+        except Exception as e:
+            logging.error(f"Managerga xabar yuborishda xato: {mgr_username} — {e}")
+
+    await message.answer("✅ Buyurtmangiz qabul qilindi! Tez orada managerlarimiz siz bilan bog‘lanadi.", reply_markup=main_menu_kb)
     await state.finish()
 
-# --- 15. Noma’lum buyruq yoki xato matn ---
 @dp.message_handler()
-async def unknown_msg(message: types.Message):
-    await message.answer("Iltimos, menyudan xizmat tanlang yoki /start ni bosing.", reply_markup=main_menu)
+async def fallback_handler(message: types.Message):
+    await message.answer("❓ Iltimos, menyudan xizmat tanlang yoki /start komandasini yuboring.", reply_markup=main_menu_kb)
 
-# --- 16. Bot ishga tushishi ---
+# --- 10. Botni ishga tushurish ---
 if __name__ == "__main__":
+    logging.info("Bot ishga tushmoqda...")
     executor.start_polling(dp, skip_updates=True)
