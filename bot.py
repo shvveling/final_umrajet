@@ -174,16 +174,28 @@ def back_cancel_buttons():
     kb.add("🔙 Orqaga", "❌ Bekor qilish")
     return kb
 
-# --- 9. /start va /help handlerlari ---
 @dp.message_handler(commands=["start", "help"])
-async def cmd_start(message: types.Message):
-    greeting = (
-        f"👋 Assalomu alaykum, <b>{message.from_user.full_name}</b>!\n\n"
-        "UmraJet Botiga xush kelibsiz! Siz uchun eng qulay Umra xizmatlari shu yerdadir.\n"
-        "Iltimos, quyidagi xizmatlardan birini tanlang va biz bilan safaringizni boshlang."
+async def start_handler(message: types.Message):
+    text = (
+        f"👋 Assalomu alaykum, {message.from_user.full_name}!\n\n"
+        f"<b>UmraJet Botga xush kelibsiz! 🌟</b>\n\n"
+        "Quyidagi xizmatlardan birini tanlang:\n\n"
+        "🕋 <b>Umra Paketlari</b>\n"
+        "🛂 <b>Visa Xizmatlari</b>\n"
+        "🌙 <b>Ravza Ruxsatnomalari</b>\n"
+        "🚗 <b>Transport Xizmatlari</b>\n"
+        "🚆 <b>Po‘ezd Biletlar</b>\n"
+        "✈️ <b>Aviabiletlar</b>\n"
+        "🍽️ <b>Guruh Ovqatlar</b>\n\n"
+        "📢 <b>Rasmiy kanallarimiz:</b>\n"
+        "🔹 <a href='https://t.me/umrajet'>@umrajet</a>\n"
+        "🔹 <a href='https://t.me/the_ravza'>@the_ravza</a>\n\n"
+        "👨‍💼 <b>Bog‘lanish uchun mas’ul managerlar:</b>\n"
+        "🔹 <a href='https://t.me/vip_arabiy'>@vip_arabiy</a> — Asosiy manager\n"
+        "🔹 <a href='https://t.me/V001VB'>@V001VB</a> — Zaxira manager"
     )
-    await message.answer(greeting, parse_mode="HTML", reply_markup=main_menu)
-
+    await message.answer(text, reply_markup=main_menu_kb, parse_mode="HTML", disable_web_page_preview=True)
+    
 # --- 10. Xizmat tanlash handleri ---
 @dp.message_handler(lambda m: m.text in [s["title"] for s in services.values()])
 async def service_show(message: types.Message, state: FSMContext):
