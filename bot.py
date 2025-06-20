@@ -38,7 +38,7 @@ main_menu_kb.add(
     "🕋 Umra Paketlari", "🛂 Visa Xizmatlari",
     "🌙 Ravza Ruxsatnomalari", "🚗 Transport Xizmatlari",
     "🚆 Po‘ezd Biletlar", "✈️ Aviabiletlar",
-    "🍽️ Guruh Ovqatlar"
+    "🍽️ Guruh Ovqatlar", "🤝 Hamkorlik", "☕ Donat"
 )
 
 back_cancel_kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -60,8 +60,8 @@ services = {
         "title": "🕋 Umra Paketlari",
         "desc": (
             "🌟 <b>Umra Paketlari bilan Orzularingizni Ro‘yobga Chiqarish Vaqti Keldi!</b>\n\n"
-            "🔸 <b>Oddiy Paket</b> — $1100 dan boshlanadi\n"
-            "🔸 <b>VIP Paket</b> — $2000 dan yuqori\n\n"
+            "🔸 <b>Oddiy Paket</b> — $1200 dan boshlanadi\n"
+            "🔸 <b>VIP Paket</b> — $1800 dan yuqori\n\n"
             "✅ Paketga quyidagilar kiradi:\n"
             "- Komfortli mehmonxona joylashuvi\n"
             "- Shaxsiy transport va ekskursiyalar\n"
@@ -89,9 +89,9 @@ services = {
         "title": "🌙 Ravza Ruxsatnomalari",
         "desc": (
             "🌟 <b>Maxsus Ravza Ruxsatnomalari Xizmati</b>\n\n"
-            "🎟️ Vizasi borlarga — <b>15 SAR</b>\n"
-            "🎟️ Vizasi yo‘qlarga — <b>20 SAR</b>\n\n"
-            "Guruhlar uchun chegirmalar mavjud.\n"
+            "🎟️ Viza berilsa — <b>15 SAR</b>\n"
+            "🎟️ Viza berilmasa — <b>20 SAR</b>\n\n"
+            "Bu narx dona uchun guruhlar uchun chegirmalar mavjud.\n"
             "Sizni Ravzada qulay va xavfsiz dam olish kutmoqda.\n"
             "Hozir bog‘laning, imkoniyatni qo‘ldan boy bermang!"
         ),
@@ -138,6 +138,37 @@ services = {
             "Sizning qulayligingiz biz uchun muhim!"
         ),
         "managers": ["@vip_arabiy", "@V001VB"]
+    },
+    "hamkorlik": {
+        "title": "🤝 Hamkorlik",
+        "desc": (
+            "🤝 <b>Umra Jet bilan barakali hamkorlikka qo‘shiling!</b>\n\n"
+            "💼 Sizda jamoa, auditoriya yoki tanishlar bormi?\n"
+            "U holda bu imkoniyat aynan siz uchun:\n\n"
+            "🔹 Affiliate daromad: Har bir jalb qilingan mijoz uchun pul ishlang\n"
+            "🔹 Tayyor marketing materiallari\n"
+            "🔹 Monitoring: O‘z natijangizni kuzating\n"
+            "🔹 Baraka: Dinga xizmat, duolarga sabab\n\n"
+            "🌐 Bizda chegaralar yo‘q — barcha davlatlardan hamkor bo‘lish mumkin\n\n"
+            "📲 Batafsil ma’lumot uchun yozing:\n👉 @vip_arabiy"
+        ),
+        "managers": ["@vip_arabiy"]
+    },
+    "donat": {
+        "title": "☕ Donat",
+        "desc": (
+            "☕ <b>Botimizni yaxshi ko‘rgan bo‘lsangiz, kichik donat qiling!</b>\n\n"
+            "💝 Bu orqali siz:\n"
+            "• Boshqalar ham xizmatlardan foydalana olishiga hissa qo‘shasiz\n"
+            "• Bepul maslahat va xizmatlar kengayishiga sabab bo‘lasiz\n"
+            "• Halol va foydali ishda ishtirok etasiz\n\n"
+            "💳 <b>To‘lovlar:</b>\n"
+            "- Uzcard / Humo / Visa\n"
+            "- USDT (TRC20)\n\n"
+            "<i>Donatingiz kichik bo‘lsa ham — barakasi katta bo‘ladi.</i>\n"
+            "📥 Donat yuborilgach, chekni managerga yuboring:\n👉 @vip_arabiy"
+        ),
+        "managers": ["@vip_arabiy"]
     }
 }
 
