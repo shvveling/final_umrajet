@@ -60,10 +60,10 @@ services = {
         "title": "🕋 Umra Paketlari",
         "desc": (
             "🌟 <b>Umra Paketlari bilan Orzularingizni Ro‘yobga Chiqarish Vaqti Keldi!</b>\n\n"
-            "🔸 <b>Oddiy Paket</b> — $1200 dan boshlanadi\n"
+            "🔸 <b>Premium Paket</b> — $1200 dan boshlanadi\n"
             "🔸 <b>VIP Paket</b> — $1800 dan yuqori\n\n"
             "✅ Paketga quyidagilar kiradi:\n"
-            "- Komfortli mehmonxona joylashuvi\n"
+            "- Komfort mehmonxona joylashuvi\n"
             "- Shaxsiy transport va ekskursiyalar\n"
             "- Maxsus guruh ovqatlar\n"
             "- 24/7 qo‘llab-quvvatlash va ekspert maslahatlari\n\n"
@@ -80,6 +80,7 @@ services = {
             "💰 Narxlar:\n"
             "- Turist Visa: <b>$120</b>\n"
             "- Umra Visa: <b>$160</b>\n\n"
+            "Guruhlar doimiy mijozlarimiz uchun yanada qulay narxlar.\n"
             "Vizangizni ishonchli qo‘llarga topshiring — qolganini biz bajaramiz.\n"
             "Bugun murojaat qiling, tezroq natijaga erishing!"
         ),
@@ -102,6 +103,7 @@ services = {
         "desc": (
             "🚐 <b>Shaxsiy va Guruh Transport Xizmatlari</b>\n\n"
             "✔️ Avtobuslar, taksilar va VIP transportlar\n"
+            "✔️ Shuningdek rent car xizmatlarimizham mavjud\n"
             "✔️ Qulay va ishonchli yo‘lovchi tashish\n\n"
             "Narx va qo‘shimcha ma’lumot uchun managerlarimizga murojaat qiling.\n"
             "Sayohatingiz uchun eng qulay transportni biz bilan tanlang!"
@@ -125,6 +127,7 @@ services = {
         "desc": (
             "🌍 <b>Dunyo bo‘ylab eng qulay va arzon aviabiletlar!</b>\n\n"
             "Siz tanlagan manzilga eng maqbul chiptalarni topamiz.\n"
+            "Istalgan kun uchun birinchi qo'ldan eng arzon narxlarda bletlaringizni xoziroq bron qilishingiz mumkin\n"
             "Qo‘shimcha ma’lumot uchun managerlarimizga yozing."
         ),
         "managers": ["@vip_arabiy", "@V001VB"]
@@ -134,6 +137,7 @@ services = {
         "desc": (
             "🥘 <b>Mahalliy va xalqaro taomlar guruhlar uchun tayyorlanadi.</b>\n\n"
             "Sifatli va xilma-xil menyu, shaxsiy yondashuv.\n"
+            "10+ Yillik tajribalik povurlarimiz ziyoratchilarimiz xizmatida.\n"
             "Savollar uchun managerlarga murojaat qiling.\n"
             "Sizning qulayligingiz biz uchun muhim!"
         ),
@@ -148,7 +152,8 @@ services = {
             "🔹 Affiliate daromad: Har bir jalb qilingan mijoz uchun pul ishlang\n"
             "🔹 Tayyor marketing materiallari\n"
             "🔹 Monitoring: O‘z natijangizni kuzating\n"
-            "🔹 Baraka: Dinga xizmat, duolarga sabab\n\n"
+            "🔹 Baraka: Dinga xizmat, duolarga sabab\n"
+            "🔹 Shuningdek sizda turli xizmatlar mavjud bo'lsa biz bilan hamkorlik qilish orqalik sotishingizham mumkin\n\n"
             "🌐 Bizda chegaralar yo‘q — barcha davlatlardan hamkor bo‘lish mumkin\n\n"
             "📲 Batafsil ma’lumot uchun yozing:\n👉 @vip_arabiy"
         ),
@@ -166,7 +171,7 @@ services = {
             "- Uzcard / Humo / Visa\n"
             "- USDT (TRC20)\n\n"
             "<i>Donatingiz kichik bo‘lsa ham — barakasi katta bo‘ladi.</i>\n"
-            "📥 Donat yuborilgach, chekni managerga yuboring:\n👉 @vip_arabiy"
+            "📥 Donat yuborilgach, istasangiz chekni managerga yuboring:\n👉 @vip_arabiy"
         ),
         "managers": ["@vip_arabiy"]
     }
