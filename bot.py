@@ -91,7 +91,7 @@ services = {
             "🌟 <b>Maxsus Ravza Ruxsatnomalari Xizmati</b>\n\n"
             "🎟️ Viza berilsa — <b>15 SAR</b>\n"
             "🎟️ Viza berilmasa — <b>20 SAR</b>\n\n"
-            "Bu narx dona uchun guruhlar uchun chegirmalar mavjud.\n"
+            "Bu narx dona uchun guruhlar 10+ tasreh va doimiy mijozlarimiz uchun chegirma va bonuslar mavjud.\n"
             "Sizni Ravzada qulay va xavfsiz dam olish kutmoqda.\n"
             "Hozir bog‘laning, imkoniyatni qo‘ldan boy bermang!"
         ),
