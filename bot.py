@@ -348,6 +348,74 @@ async def payment_confirmation_handler(message: types.Message, state: FSMContext
     await message.answer("✅ Buyurtmangiz qabul qilindi! Tez orada managerlarimiz siz bilan bog‘lanadi.", reply_markup=main_menu_kb)
     await state.finish()
 
+@dp.message_handler(content_types=types.ContentType.ANY, state=OrderStates.waiting_payment)
+async def handle_payment_proof(message: types.Message, state: FSMContext):
+    data = await state.get_data()
+    service_title = data.get("service")
+    payment_method = data.get("payment_method")
+    user = message.from_user
+
+    # Ma'lumotlarni tekshirish
+    if not service_title or not payment_method:
+        await message.answer("❌ Ma’lumotlar to‘liq emas. Iltimos, boshidan boshlang.")
+        await state.finish()
+        return
+
+    # Managerlar ro‘yxati
+    service = next((v for v in services.values() if v["title"] == service_title), None)
+    managers = service["managers"] if service else []
+
+    # Yuborilayotgan umumiy matn
+    base_text = (
+        f"💰 <b>To‘lov haqida yangi xabar!</b>\n\n"
+        f"👤 <b>Foydalanuvchi:</b> <a href='tg://user?id={user.id}'>{user.full_name}</a>\n"
+        f"📱 <b>Telegram:</b> @{user.username if user.username else 'yo‘q'}\n"
+        f"🕋 <b>Xizmat:</b> {service_title}\n"
+        f"💳 <b>To‘lov usuli:</b> {payment_method}\n"
+        f"⏰ <b>Vaqt:</b> {message.date.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+    )
+
+    # Agar rasm yuborilgan bo‘lsa
+    if message.photo:
+        caption = message.caption or "🖼 Chek rasmi"
+        full_text = base_text + f"📌 <b>Izoh:</b> {caption}"
+
+        await bot.send_photo(GROUP_ID, photo=message.photo[-1].file_id, caption=full_text, parse_mode="HTML")
+
+        for mgr in managers:
+            try:
+                await bot.send_photo(mgr, photo=message.photo[-1].file_id, caption=full_text, parse_mode="HTML")
+            except Exception as e:
+                logging.error(f"❗️ Managerga rasm yuborishda xato: {mgr} — {e}")
+
+    # Agar hujjat (document) yuborilgan bo‘lsa
+    elif message.document:
+        caption = message.caption or "📎 Chek fayli"
+        full_text = base_text + f"📌 <b>Izoh:</b> {caption}"
+
+        await bot.send_document(GROUP_ID, document=message.document.file_id, caption=full_text, parse_mode="HTML")
+
+        for mgr in managers:
+            try:
+                await bot.send_document(mgr, document=message.document.file_id, caption=full_text, parse_mode="HTML")
+            except Exception as e:
+                logging.error(f"❗️ Managerga hujjat yuborishda xato: {mgr} — {e}")
+
+    # Faqat matn yuborilgan bo‘lsa
+    elif message.text:
+        full_text = base_text + f"📨 <b>Xabar:</b> {message.text}"
+
+        await bot.send_message(GROUP_ID, full_text, parse_mode="HTML")
+
+        for mgr in managers:
+            try:
+                await bot.send_message(mgr, full_text, parse_mode="HTML")
+            except Exception as e:
+                logging.error(f"❗️ Managerga matn yuborishda xato: {mgr} — {e}")
+
+    await message.answer("✅ Chekingiz qabul qilindi. Tez orada managerlar siz bilan bog‘lanadi.", reply_markup=main_menu_kb)
+    await state.finish()
+
 @dp.message_handler()
 async def fallback_handler(message: types.Message):
     await message.answer("❓ Iltimos, menyudan xizmat tanlang yoki /start komandasini yuboring.", reply_markup=main_menu_kb)
