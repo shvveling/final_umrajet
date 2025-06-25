@@ -80,8 +80,8 @@ services = {
             "💰 Narxlar:\n"
             "- Turist Visa: <b>$120</b>\n"
             "- Umra Visa: <b>$160</b>\n\n"
-            "Guruhlar doimiy mijozlarimiz uchun yanada qulay narxlar.\n"
-            "Vizangizni ishonchli qo‘llarga topshiring — qolganini biz bajaramiz.\n"
+            "Guruhlar doimiy mijozlarimiz uchun yanada qulay narxlar.\n\n"
+            "Vizangizni ishonchli qo‘llarga topshiring qolganini biz bajaramiz.\n\n"
             "Bugun murojaat qiling, tezroq natijaga erishing!"
         ),
         "managers": ["@vip_arabiy", "@V001VB"]
@@ -92,8 +92,8 @@ services = {
             "🌟 <b>Maxsus Ravza Ruxsatnomalari Xizmati</b>\n\n"
             "🎟️ Viza berilsa — <b>15 SAR</b>\n"
             "🎟️ Viza berilmasa — <b>20 SAR</b>\n\n"
-            "Bu narx dona uchun guruhlar 10+ tasreh va doimiy mijozlarimiz uchun chegirma va bonuslar mavjud.\n"
-            "Sizni Ravzada qulay va xavfsiz dam olish kutmoqda.\n"
+            "Bu narx dona uchun guruhlar 10+ tasreh va doimiy mijozlarimiz uchun chegirma va bonuslar mavjud.\n\n"
+            "Sizni Ravzada qulay va xavfsiz dam olish kutmoqda.\n\n"
             "Hozir bog‘laning, imkoniyatni qo‘ldan boy bermang!"
         ),
         "managers": ["@vip_arabiy", "@V001VB"]
@@ -102,8 +102,8 @@ services = {
         "title": "🚗 Transport Xizmatlari",
         "desc": (
             "🚐 <b>Shaxsiy va Guruh Transport Xizmatlari</b>\n\n"
-            "✔️ Avtobuslar, taksilar va VIP transportlar\n"
-            "✔️ Shuningdek rent car xizmatlarimizham mavjud\n"
+            "✔️ Avtobuslar, taksilar va VIP transportlar\n\n"
+            "✔️ Shuningdek rent car xizmatlarimizham mavjud\n\n"
             "✔️ Qulay va ishonchli yo‘lovchi tashish\n\n"
             "Narx va qo‘shimcha ma’lumot uchun managerlarimizga murojaat qiling.\n"
             "Sayohatingiz uchun eng qulay transportni biz bilan tanlang!"
@@ -136,8 +136,8 @@ services = {
         "title": "🍽️ Guruh Ovqatlar",
         "desc": (
             "🥘 <b>Mahalliy va xalqaro taomlar guruhlar uchun tayyorlanadi.</b>\n\n"
-            "Sifatli va xilma-xil menyu, shaxsiy yondashuv.\n"
-            "10+ Yillik tajribalik povurlarimiz ziyoratchilarimiz xizmatida.\n"
+            "🔸 Sifatli va xilma-xil menyu, shaxsiy yondashuv.\n\n"
+            "🔸 10+ Yillik tajribalik povurlarimiz ziyoratchilarimiz xizmatida.\n\n"
             "Savollar uchun managerlarga murojaat qiling.\n"
             "Sizning qulayligingiz biz uchun muhim!"
         ),
@@ -149,10 +149,10 @@ services = {
             "🤝 <b>Umra Jet bilan barakali hamkorlikka qo‘shiling!</b>\n\n"
             "💼 Sizda jamoa, auditoriya yoki tanishlar bormi?\n"
             "U holda bu imkoniyat aynan siz uchun:\n\n"
-            "🔹 Affiliate daromad: Har bir jalb qilingan mijoz uchun pul ishlang\n"
-            "🔹 Tayyor marketing materiallari\n"
-            "🔹 Monitoring: O‘z natijangizni kuzating\n"
-            "🔹 Baraka: Dinga xizmat, duolarga sabab\n"
+            "🔹 Affiliate daromad: Har bir jalb qilingan mijoz uchun pul ishlang\n\n"
+            "🔹 Tayyor marketing materiallari\n\n"
+            "🔹 Monitoring: O‘z natijangizni kuzating\n\n"
+            "🔹 Baraka: Dinga xizmat, duolarga sabab\n\n"
             "🔹 Shuningdek sizda turli xizmatlar mavjud bo'lsa biz bilan hamkorlik qilish orqalik sotishingizham mumkin\n\n"
             "🌐 Bizda chegaralar yo‘q — barcha davlatlardan hamkor bo‘lish mumkin\n\n"
             "📲 Batafsil ma’lumot uchun yozing:\n👉 @vip_arabiy"
@@ -164,8 +164,8 @@ services = {
         "desc": (
             "☕ <b>Botimizni yaxshi ko‘rgan bo‘lsangiz, kichik donat qiling!</b>\n\n"
             "💝 Bu orqali siz:\n"
-            "• Boshqalar ham xizmatlardan foydalana olishiga hissa qo‘shasiz\n"
-            "• Bepul maslahat va xizmatlar kengayishiga sabab bo‘lasiz\n"
+            "• Boshqalar ham xizmatlardan foydalana olishiga hissa qo‘shasiz\n\n"
+            "• Bepul maslahat va xizmatlar kengayishiga sabab bo‘lasiz\n\n"
             "• Halol va foydali ishda ishtirok etasiz\n\n"
             "💳 <b>To‘lovlar:</b>\n"
             "- Uzcard / Humo / Visa\n"
