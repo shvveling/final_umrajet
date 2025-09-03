@@ -179,26 +179,38 @@ services = {
 
 # --- 7. To‘lov ma’lumotlari ---
 payments = {
-    "Uzcard": (
-        "💳 <b>Uzcard to‘lovlari:</b>\n\n"
-        "1️⃣ <code>8600 0304 9680 2624</code> (Khamidov Ibodulloh)\n"
-        "2️⃣ <code>5614 6822 1222 3368</code> (Khamidov Ibodulloh)"
-    ),
-    "Humo": (
-        "💳 <b>Humo to‘lovlari:</b>\n\n"
-        "<code>9860 1001 2621 9243</code> (Khamidov Ibodulloh)"
-    ),
-    "Visa": (
-        "💳 <b>Visa to‘lovlari:</b>\n\n"
-        "1️⃣ <code>4140 8400 0184 8680</code> (Khamidov Ibodulloh)\n"
-        "2️⃣ <code>4278 3100 2389 5840</code> (Khamidov Ibodulloh)"
-    ),
-    "Crypto": (
-        "💰 <b>Kripto to‘lovlari:</b>\n\n"
-        "USDT (Tron TRC20):\n<code>TLGiUsNzQ8n31x3VwsYiWEU97jdftTDqT3</code>\n\n"
-        "ETH (BEP20):\n<code>0xa11fb72cc1ee74cfdaadb25ab2530dd32bafa8f8</code>\n\n"
-        "BTC (BEP20):\n<code>0x8e9a10874f910244932420ba521f0c92e67414d2</code>"
-    )
+    "Uzcard": {
+        "client_msg": (
+            "✅ Siz <b>Uzcard</b> orqali to‘lov qilishni tanladingiz.\n\n"
+            "Iltimos, manager bilan bog‘laning:\n"
+            "📩 @vip_arabiy\n📩 @V001VB"
+        ),
+        "manager_msg": "🆕 Mijoz <b>Uzcard</b> orqali to‘lov qilishni tanladi."
+    },
+    "Humo": {
+        "client_msg": (
+            "✅ Siz <b>Humo</b> orqali to‘lov qilishni tanladingiz.\n\n"
+            "Iltimos, manager bilan bog‘laning:\n"
+            "📩 @vip_arabiy\n📩 @V001VB"
+        ),
+        "manager_msg": "🆕 Mijoz <b>Humo</b> orqali to‘lov qilishni tanladi."
+    },
+    "Visa": {
+        "client_msg": (
+            "✅ Siz <b>Visa</b> orqali to‘lov qilishni tanladingiz.\n\n"
+            "Iltimos, manager bilan bog‘laning:\n"
+            "📩 @vip_arabiy\n📩 @V001VB"
+        ),
+        "manager_msg": "🆕 Mijoz <b>Visa</b> orqali to‘lov qilishni tanladi."
+    },
+    "Crypto": {
+        "client_msg": (
+            "✅ Siz <b>Kripto</b> orqali to‘lov qilishni tanladingiz.\n\n"
+            "Iltimos, manager bilan bog‘laning:\n"
+            "📩 @vip_arabiy\n📩 @V001VB"
+        ),
+        "manager_msg": "🆕 Mijoz <b>Kripto</b> orqali to‘lov qilishni tanladi."
+    }
 }
 
 # --- 8. Qo‘shimcha o‘zgaruvchilar ---
