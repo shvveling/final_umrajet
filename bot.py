@@ -178,28 +178,43 @@ services = {
 }
 
 # --- 7. To‘lov ma’lumotlari ---
+# Endi bu yerda karta raqamlari yo‘q, faqat nomlar qoladi
 payments = {
-    "Uzcard": (
-        "💳 <b>Uzcard to‘lovlari:</b>\n\n"
-        "1️⃣ <code>8600 0304 9680 2624</code> (Khamidov Ibodulloh)\n"
-        "2️⃣ <code>5614 6822 1222 3368</code> (Khamidov Ibodulloh)"
-    ),
-    "Humo": (
-        "💳 <b>Humo to‘lovlari:</b>\n\n"
-        "<code>9860 1001 2621 9243</code> (Khamidov Ibodulloh)"
-    ),
-    "Visa": (
-        "💳 <b>Visa to‘lovlari:</b>\n\n"
-        "1️⃣ <code>4140 8400 0184 8680</code> (Khamidov Ibodulloh)\n"
-        "2️⃣ <code>4278 3100 2389 5840</code> (Khamidov Ibodulloh)"
-    ),
-    "Crypto": (
-        "💰 <b>Kripto to‘lovlari:</b>\n\n"
-        "USDT (Tron TRC20):\n<code>TLGiUsNzQ8n31x3VwsYiWEU97jdftTDqT3</code>\n\n"
-        "ETH (BEP20):\n<code>0xa11fb72cc1ee74cfdaadb25ab2530dd32bafa8f8</code>\n\n"
-        "BTC (BEP20):\n<code>0x8e9a10874f910244932420ba521f0c92e67414d2</code>"
-    )
+    "Uzcard": "Uzcard",
+    "Humo": "Humo",
+    "Visa": "Visa",
+    "Crypto": "Crypto"
 }
+
+# --- 9. Handlerlar ---
+
+@dp.message_handler(lambda m: m.text in ["💳 Uzcard", "💳 Humo", "💳 Visa", "💰 Crypto"], state=OrderStates.choosing_payment)
+async def payment_method_handler(message: types.Message, state: FSMContext):
+    payment_method = message.text.strip()
+    if payment_method == "💳 Uzcard":
+        key = "Uzcard"
+    elif payment_method == "💳 Humo":
+        key = "Humo"
+    elif payment_method == "💳 Visa":
+        key = "Visa"
+    elif payment_method == "💰 Crypto":
+        key = "Crypto"
+    else:
+        await message.answer("❌ Noto‘g‘ri to‘lov usuli tanlandi.")
+        return
+
+    # Mijozga managerlar bilan bog‘lanish haqida xabar
+    client_text = (
+        f"✅ Siz <b>{key}</b> orqali to‘lov qilishni tanladingiz.\n\n"
+        "Iltimos, quyidagi managerlar bilan bog‘laning:\n"
+        "📩 <a href='https://t.me/vip_arabiy'>@vip_arabiy</a>\n"
+        "📩 <a href='https://t.me/V001VB'>@V001VB</a>\n\n"
+        "To‘lovni amalga oshirgach, tasdiqlash uchun chek yoki xabar yuboring."
+    )
+
+    await message.answer(client_text, reply_markup=back_cancel_buttons(), parse_mode="HTML", disable_web_page_preview=True)
+    await state.update_data(payment_method=key)
+    await OrderStates.waiting_payment.set()
 
 # --- 8. Qo‘shimcha o‘zgaruvchilar ---
 services_titles = [s["title"] for s in services.values()]
