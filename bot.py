@@ -94,7 +94,8 @@ services = {
             "🎟️ Viza berilmasa — <b>20 SAR</b>\n\n"
             "Bu narx dona uchun guruhlar 10+ tasreh va doimiy mijozlarimiz uchun chegirma va bonuslar mavjud.\n\n"
             "Sizni Ravzada qulay va xavfsiz dam olish kutmoqda.\n\n"
-            "Hozir bog‘laning, imkoniyatni qo‘ldan boy bermang!"
+            "Hozir bog‘laning, imkoniyatni qo‘ldan boy bermang!\n\n"
+            "Mahsus taklif agarda bizdan poezd uchun blet xarid qilsangiz ravza ruhsatnomasi mutlaqo bepul taqdim etiladi!"
         ),
         "managers": ["@vip_arabiy", "@V001VB"]
     },
@@ -118,7 +119,8 @@ services = {
             "- Madina – Makka\n"
             "- Riyadh – Dammam\n\n"
             "Narxlar yo‘nalishga qarab o‘zgaradi.\n"
-            "Qo‘shimcha ma’lumot va bronlash uchun managerlarga murojaat qiling."
+            "Qo‘shimcha ma’lumot va bronlash uchun managerlarga murojaat qiling.\n\n"
+            "Mahsus taklif agarda bizdan poezd uchun blet xarid qilsangiz ravza ruhsatnomasi mutlaqo bepul taqdim etiladi!"
         ),
         "managers": ["@vip_arabiy", "@V001VB"]
     },
