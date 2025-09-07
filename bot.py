@@ -60,15 +60,18 @@ services = {
         "title": "🕋 Umra Paketlari",
         "desc": (
             "🌟 <b>Umra Paketlari bilan Orzularingizni Ro‘yobga Chiqarish Vaqti Keldi!</b>\n\n"
+            "🔸 <b>Family Oila Paket</> - $1100 dan boshlanadi\n
             "🔸 <b>Premium Paket</b> — $1200 dan boshlanadi\n"
-            "🔸 <b>VIP Paket</b> — $1800 dan yuqori\n\n"
+            "🔸 <b>VIP Paket</b> — $1600 dan boshlanadi\n\n"
             "✅ Paketga quyidagilar kiradi:\n"
             "- Komfort mehmonxona joylashuvi\n"
             "- Shaxsiy transport va ekskursiyalar\n"
             "- Maxsus guruh ovqatlar\n"
+            "- To'g'ridan to'g'ri reyslar\n"
             "- 24/7 qo‘llab-quvvatlash va ekspert maslahatlari\n\n"
+            "Biz sizning ibodatingiz to'liq va mukammal bo'lishini taminlaymiz!"
             "Biz bilan sayohatingiz qulay, xavfsiz va unutilmas bo‘ladi! "
-            "Orzularingizga yaqinlashing, bugun buyurtma bering!"
+            "Orzularingizga yaqinlashing, xoziroq buyurtma bering!"
         ),
         "managers": ["@vip_arabiy", "@V001VB"]
     },
