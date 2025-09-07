@@ -69,9 +69,9 @@ services = {
             "- Maxsus guruh ovqatlar\n"
             "- To'g'ridan to'g'ri reyslar\n"
             "- 24/7 qo‘llab-quvvatlash va ekspert maslahatlari\n\n"
-            "Biz sizning ibodatingiz to'liq va mukammal bo'lishini taminlaymiz!"
-            "Biz bilan sayohatingiz qulay, xavfsiz va unutilmas bo‘ladi! "
-            "Orzularingizga yaqinlashing, xoziroq buyurtma bering!"
+            "• Biz sizning ibodatingiz to'liq va mukammal bo'lishini taminlaymiz!\n"
+            "• Biz bilan sayohatingiz qulay, xavfsiz va unutilmas bo‘ladi!\n"
+            "• Orzularingizga yaqinlashing, xoziroq buyurtma bering!\n"
         ),
         "managers": ["@vip_arabiy", "@V001VB"]
     },
