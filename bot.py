@@ -296,7 +296,7 @@ async def payment_method_handler(message: types.Message, state: FSMContext):
         return
 
     await message.answer(
-        payment_info + "\n\nTo‘lovni amalga oshirgach, tasdiqlash uchun chek yoki xabar yuboring.",
+        payment_info + "\n\nAgar spam bo'lsangiz to‘lovni tasdiqlash uchun shunchaki biron bir xabar qoldiring managerlar o'zi siz bilan bog'lanadi.",
         reply_markup=back_cancel_buttons(),
         parse_mode="HTML"
     )
