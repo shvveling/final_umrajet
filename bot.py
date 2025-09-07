@@ -275,6 +275,7 @@ async def confirm_order_handler(message: types.Message, state: FSMContext):
     await message.answer(text, reply_markup=payment_buttons())
     await OrderStates.next()  # choosing_payment
 
+# --- To‘lov usulini tanlash handler ---
 @dp.message_handler(lambda m: m.text in ["💳 Uzcard", "💳 Humo", "💳 Visa", "💰 Crypto"], state=OrderStates.choosing_payment)
 async def payment_method_handler(message: types.Message, state: FSMContext):
     payment_method = message.text.strip()
@@ -290,18 +291,33 @@ async def payment_method_handler(message: types.Message, state: FSMContext):
         await message.answer("❌ Noto‘g‘ri to‘lov usuli tanlandi.")
         return
 
-    payment_info = payments.get(key)
-    if not payment_info:
-        await message.answer("❌ To‘lov ma’lumotlari topilmadi.")
-        return
+    data = await state.get_data()
+    service_title = data.get("service")
+    user = message.from_user
 
-    await message.answer(
-        payment_info + "\n\nTo‘lovni amalga oshirgach, tasdiqlash uchun chek yoki xabar yuboring.",
-        reply_markup=back_cancel_buttons(),
-        parse_mode="HTML"
+    # Guruhga xabar yuborish
+    text = (
+        f"📢 <b>Yangi buyurtma!</b>\n\n"
+        f"👤 Foydalanuvchi: <a href='tg://user?id={user.id}'>{user.full_name}</a>\n"
+        f"🆔 ID: {user.id}\n"
+        f"🕋 Xizmat: {service_title}\n"
+        f"💳 Tanlangan to‘lov usuli: {payments[key]}\n\n"
+        f"📲 Iltimos, foydalanuvchi bilan bog‘laning!"
     )
-    await state.update_data(payment_method=key)
-    await OrderStates.waiting_payment.set()
+    await bot.send_message(GROUP_ID, text, parse_mode="HTML")
+
+    # Foydalanuvchiga xabar yuborish
+    await message.answer(
+        "✅ Buyurtmangiz qabul qilindi.\n\n"
+        "📲 To‘lovni amalga oshirish uchun manager bilan bog‘lanishingiz kerak.\n"
+        "💳 Manager sizga karta raqamlari va barcha ma’lumotlarni taqdim etadi.\n\n"
+        "👨‍💼 Managerlar:\n"
+        "➡️ @vip_arabiy\n"
+        "➡️ @V001VB",
+        reply_markup=main_menu_kb
+    )
+
+    await state.finish()
 
 @dp.message_handler(lambda m: m.text == "🔙 Orqaga", state="*")
 async def go_back_handler(message: types.Message, state: FSMContext):
