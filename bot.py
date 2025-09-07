@@ -178,43 +178,40 @@ services = {
 }
 
 # --- 7. To‘lov ma’lumotlari ---
-# Endi bu yerda karta raqamlari yo‘q, faqat nomlar qoladi
 payments = {
-    "Uzcard": "Uzcard",
-    "Humo": "Humo",
-    "Visa": "Visa",
-    "Crypto": "Crypto"
-}
-
-# --- 9. Handlerlar ---
-
-@dp.message_handler(lambda m: m.text in ["💳 Uzcard", "💳 Humo", "💳 Visa", "💰 Crypto"], state=OrderStates.choosing_payment)
-async def payment_method_handler(message: types.Message, state: FSMContext):
-    payment_method = message.text.strip()
-    if payment_method == "💳 Uzcard":
-        key = "Uzcard"
-    elif payment_method == "💳 Humo":
-        key = "Humo"
-    elif payment_method == "💳 Visa":
-        key = "Visa"
-    elif payment_method == "💰 Crypto":
-        key = "Crypto"
-    else:
-        await message.answer("❌ Noto‘g‘ri to‘lov usuli tanlandi.")
-        return
-
-    # Mijozga managerlar bilan bog‘lanish haqida xabar
-    client_text = (
-        f"✅ Siz <b>{key}</b> orqali to‘lov qilishni tanladingiz.\n\n"
-        "Iltimos, quyidagi managerlar bilan bog‘laning:\n"
-        "📩 <a href='https://t.me/vip_arabiy'>@vip_arabiy</a>\n"
-        "📩 <a href='https://t.me/V001VB'>@V001VB</a>\n\n"
-        "To‘lovni amalga oshirgach, tasdiqlash uchun chek yoki xabar yuboring."
+    "Uzcard": (
+        "✅ Buyurtmangiz qabul qilindi.\n\n"
+        "📲 To‘lovni amalga oshirish uchun manager bilan bog‘lanishingiz kerak.\n"
+        "💳 Manager sizga karta raqamlari va barcha ma’lumotlarni taqdim etadi.\n\n"
+        "👨‍💼 Managerlar:\n"
+        "➡️ @vip_arabiy\n"
+        "➡️ @V001VB"
+    ),
+    "Humo": (
+        "✅ Buyurtmangiz qabul qilindi.\n\n"
+        "📲 To‘lovni amalga oshirish uchun manager bilan bog‘lanishingiz kerak.\n"
+        "💳 Manager sizga karta raqamlari va barcha ma’lumotlarni taqdim etadi.\n\n"
+        "👨‍💼 Managerlar:\n"
+        "➡️ @vip_arabiy\n"
+        "➡️ @V001VB"
+    ),
+    "Visa": (
+        "✅ Buyurtmangiz qabul qilindi.\n\n"
+        "📲 To‘lovni amalga oshirish uchun manager bilan bog‘lanishingiz kerak.\n"
+        "💳 Manager sizga karta raqamlari va barcha ma’lumotlarni taqdim etadi.\n\n"
+        "👨‍💼 Managerlar:\n"
+        "➡️ @vip_arabiy\n"
+        "➡️ @V001VB"
+    ),
+    "Crypto": (
+        "✅ Buyurtmangiz qabul qilindi.\n\n"
+        "📲 To‘lovni amalga oshirish uchun manager bilan bog‘lanishingiz kerak.\n"
+        "💳 Manager sizga karta raqamlari va barcha ma’lumotlarni taqdim etadi.\n\n"
+        "👨‍💼 Managerlar:\n"
+        "➡️ @vip_arabiy\n"
+        "➡️ @V001VB"
     )
-
-    await message.answer(client_text, reply_markup=back_cancel_buttons(), parse_mode="HTML", disable_web_page_preview=True)
-    await state.update_data(payment_method=key)
-    await OrderStates.waiting_payment.set()
+}
 
 # --- 8. Qo‘shimcha o‘zgaruvchilar ---
 services_titles = [s["title"] for s in services.values()]
