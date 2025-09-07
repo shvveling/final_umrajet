@@ -374,7 +374,6 @@ async def payment_confirmation_handler(message: types.Message, state: FSMContext
             logging.error(f"Managerga xabar yuborishda xato: {mgr_username} — {e}")
 
     await message.answer("✅ Buyurtmangiz qabul qilindi! Tez orada managerlarimiz siz bilan bog‘lanadi.", reply_markup=main_menu_kb)
-    await state.finish()
 
 @dp.message_handler(content_types=types.ContentType.ANY, state=OrderStates.waiting_payment)
 async def handle_payment_proof(message: types.Message, state: FSMContext):
