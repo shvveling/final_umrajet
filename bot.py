@@ -60,7 +60,7 @@ services = {
         "title": "🕋 Umra Paketlari",
         "desc": (
             "🌟 <b>Umra Paketlari bilan Orzularingizni Ro‘yobga Chiqarish Vaqti Keldi!</b>\n\n"
-            "🔸 <b>Family Oila Paket</> - $1100 dan boshlanadi\n
+            "🔸 <b>Family Oila Paket</b> - $1100 dan boshlanadi\n"
             "🔸 <b>Premium Paket</b> — $1200 dan boshlanadi\n"
             "🔸 <b>VIP Paket</b> — $1600 dan boshlanadi\n\n"
             "✅ Paketga quyidagilar kiradi:\n"
