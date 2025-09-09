@@ -63,15 +63,15 @@ services = {
             "🔸 <b>Family Oila Paket</b> - $1100 dan boshlanadi\n"
             "🔸 <b>Premium Paket</b> — $1200 dan boshlanadi\n"
             "🔸 <b>VIP Paket</b> — $1600 dan boshlanadi\n\n"
-            "✅ Paketga quyidagilar kiradi:\n"
+            "✅ Paketga quyidagilar kiradi:\n\n"
             "- Komfort mehmonxona joylashuvi\n"
             "- Shaxsiy transport va ekskursiyalar\n"
             "- Maxsus guruh ovqatlar\n"
             "- To'g'ridan to'g'ri reyslar\n"
             "- 24/7 qo‘llab-quvvatlash va ekspert maslahatlari\n\n"
-            "• Biz sizning ibodatingiz to'liq va mukammal bo'lishini taminlaymiz!\n"
-            "• Biz bilan sayohatingiz qulay, xavfsiz va unutilmas bo‘ladi!\n"
-            "• Orzularingizga yaqinlashing, xoziroq buyurtma bering!\n"
+            "• Biz sizning ibodatingiz to'liq va mukammal bo'lishini taminlaymiz!\n\n"
+            "• Biz bilan sayohatingiz qulay, xavfsiz va unutilmas bo‘ladi!\n\n"
+            "• Orzularingizga yaqinlashing, xoziroq buyurtma bering!\n\n"
         ),
         "managers": ["@vip_arabiy", "@V001VB"]
     },
@@ -82,7 +82,7 @@ services = {
             "⏰ Ish jarayoni tez va oson\n"
             "💰 Narxlar:\n"
             "- Turist Visa: <b>$120</b>\n"
-            "- Umra Visa: <b>$160</b>\n\n"
+            "- Umra Visa: <b>$180</b>\n\n"
             "Guruhlar doimiy mijozlarimiz uchun yanada qulay narxlar.\n\n"
             "Vizangizni ishonchli qo‘llarga topshiring qolganini biz bajaramiz.\n\n"
             "Bugun murojaat qiling, tezroq natijaga erishing!"
