@@ -85,6 +85,7 @@ services = {
             "- Umra Visa: <b>$180</b>\n\n"
             "Guruhlar doimiy mijozlarimiz uchun yanada qulay narxlar.\n\n"
             "Vizangizni ishonchli qo‘llarga topshiring qolganini biz bajaramiz.\n\n"
+            "Razaga tasrih vizaga mutlaqo bepul qo'shib beriladi.\n\n"
             "Bugun murojaat qiling, tezroq natijaga erishing!"
         ),
         "managers": ["@vip_arabiy", "@V001VB"]
@@ -93,8 +94,8 @@ services = {
         "title": "🌙 Ravza Ruxsatnomalari",
         "desc": (
             "🌟 <b>Maxsus Ravza Ruxsatnomalari Xizmati</b>\n\n"
-            "🎟️ Viza berilsa — <b>15 SAR</b>\n"
-            "🎟️ Viza berilmasa — <b>20 SAR</b>\n\n"
+            "🎟️ Viza berilsa — <b>13 SAR</b>\n"
+            "🎟️ Viza berilmasa — <b>18 SAR</b>\n\n"
             "Bu narx dona uchun guruhlar 10+ tasreh va doimiy mijozlarimiz uchun chegirma va bonuslar mavjud.\n\n"
             "Sizni Ravzada qulay va xavfsiz dam olish kutmoqda.\n\n"
             "Hozir bog‘laning, imkoniyatni qo‘ldan boy bermang!\n\n"
