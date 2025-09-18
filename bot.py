@@ -85,7 +85,7 @@ services = {
             "- Umra Visa: <b>$180</b>\n\n"
             "Guruhlar doimiy mijozlarimiz uchun yanada qulay narxlar.\n\n"
             "Vizangizni ishonchli qo‘llarga topshiring qolganini biz bajaramiz.\n\n"
-            "Razaga tasrih vizaga mutlaqo bepul qo'shib beriladi.\n\n"
+            "Ravzaga tasrih vizaga mutlaqo bepul qo'shib beriladi.\n\n"
             "Bugun murojaat qiling, tezroq natijaga erishing!"
         ),
         "managers": ["@vip_arabiy", "@V001VB"]
